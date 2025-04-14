@@ -23,12 +23,20 @@ void i2c_task(void *p) {
 
     uint8_t buffer[6];
 
-    uint8_t register_address = 0x75;
-    i2c_write_blocking(i2c_default, I2C_CHIP_ADDRESS, &register_address, 1, true);
-    i2c_read_blocking(i2c_default, I2C_CHIP_ADDRESS, buffer, 1, false);
-    printf("WHOAMI: 0x%X\n", buffer[0]);
+    // read whoami
+    uint8_t reg_address = 0x75;
 
-    printf("INT_ENABLE: 0x%X\n", buffer[0]);
+    i2c_write_blocking(i2c_default, I2C_CHIP_ADDRESS, &reg_address, 1, true); // true to keep master control of bus
+    i2c_read_blocking(i2c_default, I2C_CHIP_ADDRESS, buffer, 1, false);
+    printf("WHOAMI: 0x%X \n", buffer[0]);
+
+    // TODO
+    // Leia o INT_ENABLE e imprima o valor
+    reg_address = 0x38;
+    
+    i2c_write_blocking(i2c_default, I2C_CHIP_ADDRESS, &reg_address, 1, true); // true to keep master control of bus
+    i2c_read_blocking(i2c_default, I2C_CHIP_ADDRESS, buffer, 1, false);
+    printf("INT_ENABLE: 0x%X \n", buffer[0]);
 
     while (1) {
         vTaskDelay(pdMS_TO_TICKS(200));
