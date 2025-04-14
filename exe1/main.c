@@ -20,16 +20,20 @@ void i2c_task(void *p) {
     gpio_set_function(I2C_SCL_GPIO, GPIO_FUNC_I2C);
     gpio_pull_up(I2C_SDA_GPIO);
     gpio_pull_up(I2C_SCL_GPIO);
+    uint8_t buffer[2];
+    buffer[0] = MPUREG_PWR_MGMT_1; // registrador
+    buffer[1] = 1 << 7;            // valor
+    i2c_write_blocking(i2c_default, I2C_CHIP_ADDRESS, buffer, 2, false);
 
-    // reset device to its default state
-    // colocando 1 no bit 7 do registrador 0x6B
-    uint8_t buf_write[2];
-    buf_write[0] = MPUREG_PWR_MGMT_1; // registrador
-    buf_write[1] = 1 << 7;            // valor
-    i2c_write_blocking(i2c_default, I2C_CHIP_ADDRESS, buf_write, 2, false);
+    vTaskDelay(pdMS_TO_TICKS(100));
 
-    // TODO
-    // Configure o acc para operar em 4G
+
+
+
+    buffer[0] = MPUREG_ACCEL_CONFIG; // registrador
+    buffer[1] = 1 << 3;            // valor
+    i2c_write_blocking(i2c_default, I2C_CHIP_ADDRESS, buffer, 2, false);
+
 
     while (1) {
         vTaskDelay(pdMS_TO_TICKS(200));
